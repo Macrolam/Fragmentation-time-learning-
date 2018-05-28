@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>document.execComman方法应用</title>
+    <style>
+        /*用户输入文本*/
+        #copyText {
+            width: 200px;
+            height: 30px;
+            border: 1px solid #448AFF;
+            border-radius: 6px;
+            padding-left: 10px;
+        }
+
+        .btn {
+            width: 80px;
+            height: 30px;
+            background: #448AFF;
+            border: none;
+            box-shadow: 2px 4px 6px #ccc;
+            color: #fff;
+            border-radius: 10px;
+        }
+
+        .btn:focus {
+            outline: none;
+        }
+
+        /*隐藏copy容器*/
+        #copyWrap {
+            position: fixed;
+            width: 0px;
+            height: 0px;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+<input type="text" placeholder="请输入内容" id="copyText">
+<button class="btn">copy</button>
+<textarea id="copyWrap"></textarea>
+</body>
+<script>
+    window.onload = function () {
+        let copyTxtO = document.querySelector('#copyText')
+        let copyWrapO = document.querySelector('#copyWrap')
+        document.querySelector('.btn').addEventListener('click', copyFn)
+        function copyFn() {
+            let copyTxt = copyTxtO.value
+            if (copyTxt === "") {
+                return false
+            }
+            if (document.execCommand('copy', false, null)) {
+                copyWrapO.value = copyTxt
+                copyWrapO.select()
+                document.execCommand('copy', false, null)
+                alert("copy success")
+            } else {
+                console.error("copy error");
+            }
+        }
+    }
+    /*选中当前页面所有文本*/
+    //document.execCommand("selectAll")
+</script>
+
+</html>

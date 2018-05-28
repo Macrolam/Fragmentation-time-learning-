@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>copy实现</title>
+    <style>
+        .warp{
+            width: 100px;
+            height: 100px;
+            background: cadetblue;
+        }
+    </style>
+</head>
+
+<body>
+<div class="warp">
+    test copy
+</div>
+<textarea class="copyBox"></textarea>
+<button class="btn">copy</button>
+<script>
+    window.onload=function () {
+        document.querySelector('.btn').addEventListener('click',copy)
+        
+        function copy() {
+            console.log(  document.execCommand("copy",false,null));
+            let warpO = document.querySelector('.warp')
+            let copyStr = warpO.innerText
+            let copyBoxO =document.querySelector('.copyBox')
+            console.log(copyStr,"copy str:");
+            if( document.execCommand("copy",false,null)){
+                copyBoxO.value = copyStr
+                copyBoxO.select()
+                document.execCommand("copy",false,null)
+            }
+            
+        }
+    }
+</script>
+</body>
+</html>
