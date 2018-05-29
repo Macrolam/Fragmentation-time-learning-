@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    /*打印样式不一样*/
+    console.log("常规打印");
+    console.error("错误打印");
+    console.warn("警告打印");
+    /*设置打印字颜色*/
+    /*文字前带有 %c 标识 */
+    console.log("%c带有颜色的文字", "color:pink")
+
+    /*带换行符打印*/
+    console.log("string \n hahah");
+    var a = "我是变量"
+    console.log("打印：","\n",a);
+
+    /*检测代码执行时间*/
+    console.time("fnDoTime");
+    for (var i = 0; i <1000; i++) {
+             i+=1
+    }
+    console.log(i,"i:");
+    /* 输出-fnDoTime: 0.027099609375ms*/
+    console.timeEnd('fnDoTime');
+    
+</script>
+</body>
+</html>
