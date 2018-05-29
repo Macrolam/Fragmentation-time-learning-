@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>对象相关操作</title>
+</head>
+<body>
+<script>
+    /*
+     -----------------
+     判断一个对象非空方式 begin
+     -----------------
+     */
+    var optionNull = {}
+    var option = {
+        name: "macrolam",
+        job: "coder"
+    }
+    /*es6 新增方法
+     * Object.keys(obj) 方法会返回一个由一个给定对象的自身可枚举属性组成的数组，类似 for...in 循环遍历对象
+     * */
+    console.log(Object.keys(option));//["name", "job"]
+    if (Object.keys(optionNull).length == 0) {
+        console.log('空对象');
+    } else {
+        console.log('非空对象');
+    }
+
+    /*
+     * 通过JSON自带的.stringify方法来判断，代码如下：
+     * */
+    if (JSON.stringify(optionNull) == '{}') {
+        console.log('空对象');
+    }
+    /*
+     * for in
+     * */
+    function judgeObj(obj) {
+        for (var a in obj) {
+            //console.log(obj[a]);
+            return alert('非空对象')
+        }
+        return alert('空对象')
+    }
+    judgeObj(option)
+
+    /*
+    * 误区：if(optionNull) 或是 if(optionNull == null)
+    * */
+    if(optionNull == null){
+        console.log('fei');
+    }
+</script>
+
+</body>
+</html>
