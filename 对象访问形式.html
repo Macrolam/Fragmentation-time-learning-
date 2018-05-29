@@ -31,7 +31,8 @@
      * 操作：这里指对象属性的设置和读取（set 和 get）
      * */
 
-
+    /**************************应用-案例1-start：*****************************/
+    /*接口联调时候，出现的一个场景，web前端前期开发时候，接口api没出来，字段定义按照web端开发时候走，接口出来后，会有差异，写一个对照表进行转换*/
     /*字段转换对照表*/
     let self = {}
     self.options = {
@@ -42,7 +43,7 @@
     /*api -入参*/
     let params = {}
     if (self.options && JSON.stringify(self.options) !== '{}') {
-       /*有对照表，且不为空，按照对照表取字段*/
+        /*有对照表，且不为空，按照对照表取字段*/
         params[self.options.id] = "001"
         params[self.options.tit] = "i am title"
         params[self.options.con] = "i am content"
@@ -54,7 +55,7 @@
         params.content = "i am content"
         console.log(params, "通过  . set params 属性:");
     }
-
+    /**************************应用-案例1-end：*****************************/
 </script>
 </body>
 </html>
