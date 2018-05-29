@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    /*什么时候需求使用中括号设置和读取对象属性-属性名是变量时*/
+    var obj = {}
+    var name
+    obj[name] = "I am var pro, by [] to get-"
+    console.log(obj[name], "变量属性，通过中括号取值:");
+    console.log(obj.name, "变量属性，通过点取不到值:");
+
+    /*当对象属性是一个常量时，使用中括号，会怎么样？*/
+    obj.nameStr = "I am const pro"
+    console.log(obj.nameStr, "nameStr:");
+    /*如下：会报错-Uncaught ReferenceError: nameStr is not defined*/
+    // console.log(obj[nameStr], "obj[nameStr]:");
+
+    /*如下：会报错-Uncaught ReferenceError: nameVar is not defined*/
+    //obj[nameVar] = "by [] to set"
+    /*通过 [] 去操作，默认为变量*/
+    // console.log(obj[nameVar], "obj[nameStr]:");
+
+    /*小结：
+     * 属性是变量时候，操作采用 []
+     * 属性是常量时候，操作采用 .
+     * 二者不可混用
+     * 操作：这里指对象属性的设置和读取（set 和 get）
+     * */
+
+
+    /*字段转换对照表*/
+    let self = {}
+    self.options = {
+        id: "id",
+        tit: "subject",
+        con: "content",
+    }
+    /*api -入参*/
+    let params = {}
+    if (self.options && JSON.stringify(self.options) !== '{}') {
+       /*有对照表，且不为空，按照对照表取字段*/
+        params[self.options.id] = "001"
+        params[self.options.tit] = "i am title"
+        params[self.options.con] = "i am content"
+        console.log(params, "通过  [] set params 属性:");
+    } else {
+        /*没有，自己去扩展*/
+        params.id = "001"
+        params.subject = "i am title"
+        params.content = "i am content"
+        console.log(params, "通过  . set params 属性:");
+    }
+
+</script>
+</body>
+</html>
