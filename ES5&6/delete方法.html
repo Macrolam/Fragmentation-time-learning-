@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p> delete 方法：</p>
+<p> 语法： delete x</p>
+<p>返回值：true / false 表示此属性是否可以被删除 （在严格模式下，如果是一个不可以配置的属性，删除会抛出错误）</p>
+</body>
+<script>
+// 1.可以删除 显示的全局变量，隐式的删除不了。所谓全局就是挂在window对象下，即代码里顶级作用域定义的变量
+    var  a = "我是显式的全局变量,delete删除不掉"
+         b = "我是隐式的全局变量，也可以认为是window的属性，delete可以删除掉属性，但是变量不可以"
+       console.log( delete a); //false
+       console.log( delete b);// true
+
+// 2. 可以删除 configurable为true的属性。一般内置对象的属性是不可配置的，也就是configurable 为false ，所以不可以删除。
+    /*内置对象*/
+    console.log(delete Math.PI);//false
+    
+    /*自定义对象*/
+    var o ={}
+    o.pro = 1
+    console.log(o.pro,"删除前：");
+    delete o.pro;//true
+    console.log(o.pro,"删除后：");//undefined
+
+    o.fn = function () {
+        console.log("我是对象下挂的方法，看你能删除成功吗？");
+    }
+    o.fn()
+    delete o.fn // true
+    o.fn() //删除成功，导致调用报错，o.fn is not a function
+
+    /*函数-》匿名变量-不可删除*/
+    function fn() {
+        console.log("我是函数,等同变量，不可以被delete成功的");
+    }
+    fn()
+    delete fn;
+    fn()
+
+</script>
+</html>
