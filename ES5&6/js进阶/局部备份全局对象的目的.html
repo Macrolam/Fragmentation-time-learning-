@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>作用域链、原型链的查找规则</title>
+</head>
+<body>
+<pre>
+摘自网络：
+<br>
+
+      作用域链条:
+       在一个作用域中,要使用属性,
+       1. 先递归遍历寻找当前作用域中有没有这个属性, 如果有,则用, 如果没有,则会顺着链条继续往上寻找
+       2. 递归: 多层遍历,--> 影响性能
+       3. 在作用域链条中,遍历只能从下而上, 不能由上而下
+
+       建议:
+       1.尽量不要使用全局变量
+       2. 作用域链不要太多
+
+<br>
+       其实个人觉得上边的说法不太严谨，作用域是管理变量的，所以作用域链条的查找规则，是针对变量的一系列查找规则。做如下的描述：
+<br>
+
+      作用域链条:
+       在一个作用域中,要使用（访问）变量,
+       1. 先递归遍历寻找当前作用域中有没有这个变量, 如果有,则用, 如果没有,则会顺着链条继续往上寻找
+       2. 递归: 多层遍历,--> 影响性能
+       3. 在作用域链条中,遍历只能从下而上, 不能由上而下
+
+       建议:
+       1.尽量不要使用全局变量，全局挂了太多东西，当遍历它时会很慢
+       2. 作用域链不要太多
+
+       不过，要是看完下边这段描述，你可能觉得第一种说法还可以站得住脚。变量和属性还是有区别的，比如:变量是不会像属性有get set方法的
+<br>
+       关于this简单直观的理解：
+       this: this所在的函数在哪个对象中, this就指向对象(大部分情况)
+       this: 指针
+
+       window两大特性:
+       所有全局的变量都是window的属性
+       所有全局的函数都是window的方法
+
+       少数情况特殊:
+       1. 如果this在定时器中, this就指向window
+       2. 如果this在事件源中, this就指向产生这个事件源的对象
+
+</pre>
+<button id="btn">按钮</button>
+更好的理解下边代码这个过程，建议仔细看下断点执行时，堆栈中的赋值操作过程。
+<script>
+
+    var btn = document.getElementById('btn');
+
+    // 因为闭包里的局部作用域中是没有document对象的，所以会顺着作用域链向上走，到了全局。这个过程是一个递归（N层遍历）的过程，也就是到上一级去遍历document
+    (function () {
+        var btn1 = document.getElementById('btn');
+        debugger
+        var btn2 = document.getElementById('btn');
+        var btn3 = document.getElementById('btn');
+    })();
+
+
+    // 所以，我们把这个局部用到的全局对象 存到当前域下的变量d中，也就是只会去全局进行一次查找，下边的3次调用都是在当前作用域下遍历拿到的，性能上肯定优
+    (function () {
+        var d = document ;
+        var btn1 = d.getElementById('btn');
+        debugger
+        var btn2 = d.getElementById('btn');
+        var btn3 = d.getElementById('btn');
+    })();
+
+    // 进一步改造下上边的写法，在闭包中，把全局对象传递进来给参数document，形参是变量，形参和实参之间进行的就是一个赋值操作，和上边的写法本质是一样的，只是又可以省去一句代码。
+    (function (document) {
+        var btn1 =  document.getElementById('btn');
+        debugger
+        var btn2 =  document.getElementById('btn');
+        var btn3 =  document.getElementById('btn');
+    })(document);
+
+</script>
+</body>
+</html>
