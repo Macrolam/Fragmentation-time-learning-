@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+<script src="./lz-string.min.js"></script>
+<script>
+    ;
+    (function () {
+        //var LZString = require('./lz-string.min.js')
+        /*
+         *@desc:加密类
+         *@param: option [object] 参数对象 option.str [string] 源串  option.isEncode [boolean]   是否加密
+         *@return：
+         */
+        function EnCode(option) {
+            this._init(option)
+        }
+
+        EnCode.prototype = {
+            // 修正构造函数指针
+            constructor: EnCode,
+            // init初始化
+            _init: function (option) {
+                var option = option || {}
+                if (!option.str || typeof option.str !== 'string') {
+                    return
+                }
+                this.str = option.str
+                this.isEncode = option.isEncode
+                this.random = Math.floor(Math.random() * 256)
+                this.random_hex = this.random < 16 ? '0' + this.random.toString(16) : this.random.toString(16)
+                console.log(this.str)
+                console.log(option)
+                this.isEncode == true ? this.enCode(this.str) : this.decode(this.str)
+            },
+            // 字符串转字节码数组
+            stringToByteArr: function (rawStr) {
+                var bytes = new Array();
+                var len, c;
+                len = rawStr.length;
+                for (var i = 0; i < len; i++) {
+                    c = rawStr.charCodeAt(i);
+                    if (c >= 0x010000 && c <= 0x10FFFF) {
+                        bytes.push(((c >> 18) & 0x07) | 0xF0);
+                        bytes.push(((c >> 12) & 0x3F) | 0x80);
+                        bytes.push(((c >> 6) & 0x3F) | 0x80);
+                        bytes.push((c & 0x3F) | 0x80);
+                    } else if (c >= 0x000800 && c <= 0x00FFFF) {
+                        bytes.push(((c >> 12) & 0x0F) | 0xE0);
+                        bytes.push(((c >> 6) & 0x3F) | 0x80);
+                        bytes.push((c & 0x3F) | 0x80);
+                    } else if (c >= 0x000080 && c <= 0x0007FF) {
+                        bytes.push(((c >> 6) & 0x1F) | 0xC0);
+                        bytes.push((c & 0x3F) | 0x80);
+                    } else {
+                        bytes.push(c & 0xFF);
+                    }
+                }
+                return bytes;
+            },
+            // 字节码数组转字符串
+            byteArrToString: function (arr) {
+                if (typeof arr === 'string') {
+                    return arr;
+                }
+                var str = '',
+                        _arr = arr;
+                for (var i = 0; i < _arr.length; i++) {
+                    var one = _arr[i].toString(2),
+                            v = one.match(/^1+?(?=0)/);
+                    if (v && one.length == 8) {
+                        var bytesLength = v[0].length;
+                        var store = _arr[i].toString(2).slice(7 - bytesLength);
+                        for (var st = 1; st < bytesLength; st++) {
+                            store += _arr[st + i].toString(2).slice(2);
+                        }
+                        str += String.fromCharCode(parseInt(store, 2));
+                        i += bytesLength - 1;
+                    } else {
+                        str += String.fromCharCode(_arr[i]);
+                    }
+                }
+                return str;
+            },
+            // 加密+加压
+            enCode: function (rawStr) {
+                var a = [], ss = '';
+                var sb = this.stringToByteArr(rawStr);
+                /* 255（10）-> 0xff(16)  128(10) ->0x80(16)*/
+                //var r = Math.floor(Math.random() * 128);
+                /*补齐 位数 保证2位 */
+                ///var r16 =r < 16 ? '0' + r.toString(16) : r.toString(16)
+
+                for (var i = 0; i < sb.length; i++) {
+                    a[i] = ~((sb[i] + this.random) % 256);
+                    ss += Math.abs(a[i]).toString(16);
+                }
+                console.log("密文:" + ss);
+                var aCompress = LZString.compressToBase64(ss);
+                // 在压缩字符串的第三位处插上16进制随机数
+                var resultComStr = aCompress.slice(0, 2) + this.random_hex + aCompress.slice(2)
+
+                console.log("密文压缩:" + resultComStr);
+                return resultComStr;
+            },
+            // 解压+解密
+            decode: function (str) {
+                var random = parseInt(str.slice(2, 4), 16);
+                var aCompress = str.slice(0, 2) + str.slice(4);
+                if (!LZString.decompressFromBase64(aCompress)) {
+                    alert("解压格式错误")
+                    return false
+                }
+                var ds = LZString.decompressFromBase64(aCompress).replace(new RegExp("(\\S{2})", "g"), "$1,").split(',');
+                var b = [];
+                for (var i = 0; i < ds.length - 1; i++) {
+                    b.push((~(-parseInt(ds[i], 16)) - random) % 256);
+                }
+                debugger
+                var resultUncomStr = this.byteArrToString(b)
+                console.log("解密：" + resultUncomStr);
+                return resultUncomStr
+            }
+        }
+        // 向外暴露
+
+        window.EnCode = EnCode;
+
+    })()
+
+        // 使用-不处理中文韩文等
+        new EnCode({
+            "str": 'com=1',
+            "isEncode": true
+        })
+        new EnCode({
+            'str': 'IY3fZmDNgEwdlhGIA=',
+            'isEncode': false
+        })
+</script>
+
+</body>
+</html>
