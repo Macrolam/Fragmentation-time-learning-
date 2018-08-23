@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>render</title>
+    <script src="./libs/vue.js"></script>
+</head>
+<body>
+<div id="app" ref="app">
+
+</div>
+</body>
+<script src="js/main.js"></script>
+<script>
+    /*
+     * import语句用于导入由另一个模块导出的绑定。无论是否声明了 strict mode ，导入的模块都运行在严格模式下。*/
+    /*import语句不能在嵌入式脚本中使用*/
+    // import home from '../component/home.vue' // 报错
+    import modeOne from 'js/modone.js'
+    console.log(modeOne);
+
+    /*  var app = new Vue({
+     el: '#app',
+     render: h => h(home),
+     });*/
+</script>
+</html>

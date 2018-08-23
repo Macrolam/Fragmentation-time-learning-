@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>vue实例</title>
+    <script src="./libs/vue.js"></script>
+</head>
+<body>
+<div id="app" ref="app">
+    <input type="text" v-model="inputVal">
+    <p>{{mes}}</p>
+</div>
+</body>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            inputVal: '',
+            mes:"vue app"
+        },
+        created(){
+            console.log(this, "viewModel-this:"); // vue 实例
+            console.error(this.mes,"created 中访问data属性");
+        },
+    });
+    console.log(app, "viewModel-app:");// vue 实例
+    console.error(app.$data.mes ,"外部访问data属性");
+</script>
+</html>

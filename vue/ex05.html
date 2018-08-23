@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>指令-对DOM进行操作时使用（指令的值影响着DOM的渲染方式）</title>
+    <script src="./libs/vue.js"></script>
+</head>
+<body>
+<div id="app" ref="app">
+    <!--举个聚焦输入框的例子-->
+    <input type="text" v-model="inputVal" v-focus>
+</div>
+</body>
+<script>
+    Vue.directive('focus', {
+        inserted: function (dom) {
+            dom.focus()
+        }
+    })
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            inputVal: '',
+        },
+//        directives:{
+//            focus:{
+//                inserted:function (dom) {
+//                    dom.focus()
+//                }
+//            }
+//        }
+    });
+    console.log(Vue.directive, "directive是Vue构造函数上挂载的工具方法：");
+    document.write(Vue.directive)// 通过打印出此方法的源代码，可以看出：不写 钩子函数，默认是bind 和 update
+    function (id, definition) {
+        if (!definition) {
+            return this.options[type + 's'][id]
+        } else { /* istanbul ignore if */
+            if ("development" !== 'production' && type === 'component') {
+                validateComponentName(id);
+            }
+            if (type === 'component' && isPlainObject(definition)) {
+                definition.name = definition.name || id;
+                definition = this.options._base.extend(definition);
+            }
+            if (type === 'directive' && typeof definition === 'function') {
+                definition = {bind: definition, update: definition};
+            }
+            this.options[type + 's'][id] = definition;
+            return definition
+        }
+    }
+
+    /*
+     * 指令定义函数提供了几个钩子函数（可选）：
+     bind: 只调用一次，指令第一次绑定到元素时调用，用这个钩子函数可以定义一个在绑定时执行一次的初始化动作。
+     inserted: 被绑定元素插入父节点时调用（父节点存在即可调用，不必存在于 document 中）。
+     update: 被绑定元素所在的模板更新时调用，而不论绑定值是否变化。通过比较更新前后的绑定值，可以忽略不必要的模板更新（详细的钩子函数参数见下）。
+     componentUpdated: 被绑定元素所在模板完成一次更新周期时调用。
+     unbind: 只调用一次， 指令与元素解绑时调用。
+     * */
+    /*不写 钩子函数，默认是bind 和 update*/
+</script>
+</html>

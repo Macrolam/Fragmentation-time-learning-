@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>计算属性与方法的等同实现方案</title>
+    <script src="./libs/vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <input type="text" v-model="inputVal">
+    <p v-text="mes"></p>
+    <!--<p>{{newVal}}</p>-->
+    <p>{{getNewVal()}}</p>
+</div>
+
+</body>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            mes: "vue app",
+            inputVal: ''
+        },
+        computed: {
+         /*   newVal: function () {
+                return this.inputVal + " create by me"
+            },*/
+
+        },
+        methods: {
+            getNewVal(){
+                return this.inputVal + " create by me"
+            }
+        }
+    })
+</script>
+</html>

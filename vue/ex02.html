@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>computed与watch</title>
+    <script src="./libs/vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <input type="text" v-model="inputVal">
+    <p>{{newVal}}</p>
+</div>
+
+</body>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            inputVal: '',
+        },
+        computed: {
+            newVal: function () {
+                return this.inputVal + " create by me"
+            },
+        },
+        watch: {
+            newVal: function (newValue, oldValue) {
+                console.log("newVal 改变执行", newValue + "-old-:", oldValue);
+            }
+        },
+    });
+</script>
+</html>
