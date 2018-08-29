@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script >
+    // option [Object]
+    /*
+     * 文件上传[切片上传，断点续传，支持暂停、继续]
+     * @param option [object]
+     * @param file   [object] type=file 的input dom
+     * @param file   [object] type=file 的input dom
+     * */
+    ;(function (window) {
+        // 构造函数
+        function upLoadFile(option) {
+            // 执行初始化操作
+            this.init(option)
+        }
+
+        // 原型库
+        upLoadFile.prototype = {
+            // 修正构造器
+            constructor: upLoadFile,
+            // 初始化参数操作
+            init: function (option) {
+                if (!option)return false;
+                this.a = option.a
+                const BYTES_PER_CHUNK = 1024 * 1024; // 每个文件切片大小定为0.5MB .
+                var slices;//切割的份数
+                var totalSlices;
+                var start = 0;
+                var end = BYTES_PER_CHUNK;
+                var index = 0;
+                var stop = 0
+            },
+            // 绑定初始化事件
+            bindEvent: function () {
+
+            },
+            // 暂停
+            sendStop: function () {
+                if (start == 0) {
+                    alert("未检测到文件上传")
+                    return false
+                }
+                stop = 1
+            },
+            // 开始
+            sendStart: function () {
+                if (start == 0) {
+                    alert("未检测到文件上传")
+                    return false
+                }
+                stop = 0
+                sendRequest();
+            },
+            //发送请求
+            sendRequest: function () {
+                var blob = document.getElementById('file').files[0];
+                // 计算文件切片总数
+                slices = Math.ceil(blob.size / BYTES_PER_CHUNK);
+                totalSlices = slices;
+                if (stop == 1) {
+                    alert("停止上传");
+                    return false
+                }
+                if (start < blob.size) {
+                    if (end > blob.size) {
+                        end = blob.size;
+                    }
+                    uploadFile(blob, index, start, end);
+                    start = end;
+                    end = start + BYTES_PER_CHUNK;
+                    index++;
+                }
+            },
+            //上传文件
+            uploadFile: function (blob, index, start, end) {
+                var xhr;
+                var fd;
+                var chunk;
+                xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4) {
+                        if (xhr.responseText) {
+                            alert(xhr.responseText);
+                        }
+                        if (slices > 1) {
+                            slices--;
+                        }
+                        var percent = 100 * index / slices;
+                        if (percent > 100) {
+                            percent = 100;
+                        } else if (percent == 0 && slices == 1) {
+                            percent = 100;
+                        }
+                        document.getElementById('progress').style.width = percent + '%';
+                        document.getElementById('progress').innerHTML = parseInt(percent) + '%';
+                        // 如果所有文件切片都成功发送，发送文件合并请求。
+                        if (percent == 100) {
+                            mergeFile(blob);
+                            start = 0;
+                            alert('文件上传完毕');
+                        } else {
+                            if (stop != 1) {
+                                sendRequest();
+                            }
+                        }
+                    }
+                };
+
+                chunk = blob.slice(start, end);//切割文件
+                //构造form数据
+                fd = new FormData();
+                fd.append("file", chunk);
+                fd.append("name", blob.name);
+                fd.append("index", index);
+                xhr.open("POST", "upload.php", true);
+                //设置二进制文边界件头
+                xhr.setRequestHeader("X_Requested_With", location.href.split("/")[3].replace(/[^a-z]+/g, '$'));
+                xhr.send(fd);
+            },
+            // 续传
+            mergeFile: function (blob) {
+                var xhr;
+                var fd;
+                xhr = new XMLHttpRequest();
+                fd = new FormData();
+                fd.append("name", blob.name);
+                fd.append("index", totalSlices);
+                xhr.open("POST", "mer_add.php", true);
+                xhr.setRequestHeader("X_Requested_With", location.href.split("/")[3].replace(/[^a-z]+/g, '$'));
+                xhr.send(fd);
+
+            },
+        }
+
+        // 暴露到全局
+        window.upLoadFile = upLoadFile
+    })(window)
+</script>
+</html>
